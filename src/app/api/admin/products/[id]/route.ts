@@ -30,6 +30,6 @@ export async function DELETE(_: NextRequest, { params }: { params: { id: string 
 
     return NextResponse.json({ message: 'Product deleted successfully' });
   } catch (err) {
-    return NextResponse.json({ error: 'Error deleting product' }, { status: 500 });
+    return NextResponse.json({ error: err }, { status: 500 });
   }
 }

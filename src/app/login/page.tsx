@@ -15,7 +15,13 @@ const Login = () => {
   const router = useRouter();
   const dispatch = useDispatch();
   
-const user = localStorage.getItem('user')
+const [user, setuser] = useState<string | null>(null);
+
+  useEffect(() => {
+    const storedUser = localStorage.getItem('user');
+    setuser(storedUser);
+  }, []);
+  
   useEffect(() => {
     if (user) {
       router.push("/dashboard");
@@ -31,7 +37,7 @@ const user = localStorage.getItem('user')
       dispatch(setUser({ user: email }));
       localStorage.setItem('user', email);
       router.push("/dashboard");
-    } catch (error : any) {
+    } catch (error) {
       console.error("Error logging in:", error);
       toast.error(error.message);
     } finally {
@@ -74,7 +80,7 @@ const user = localStorage.getItem('user')
             {loading ? "Logging in..." : "Login"}
           </button>
         </form>
-        <p className="mt-3 text-gray-600">Don't have an account <a href="/signup" className="text-green-600 font-bold">SignUp</a></p>
+        <p className="mt-3 text-gray-600">Dont have an account <a href="/signup" className="text-green-600 font-bold">SignUp</a></p>
       </div>
     </div>
   );

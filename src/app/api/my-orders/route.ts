@@ -11,6 +11,6 @@ export async function GET(req: NextRequest) {
     const res = await pool.query('SELECT * FROM orders WHERE user_email = $1', [userEmail]);
     return NextResponse.json(res.rows);
   } catch (err) {
-    return NextResponse.json({ error: 'Error fetching orders' }, { status: 500 });
+    return NextResponse.json({ error: err }, { status: 500 });
   }
 }

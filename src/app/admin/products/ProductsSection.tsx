@@ -4,11 +4,19 @@ import { useEffect, useState } from 'react'
 import axios from 'axios'
 import toast from 'react-hot-toast'
 
+
+type Product = {
+  id: number;
+  name: string;
+  price: string;
+  image_url: string;
+}
+
 const ProductsSection = () => {
-  const [products, setProducts] = useState<any[]>([])
+  const [products, setProducts] = useState<Product[]>([])
   const [loading, setLoading] = useState(true)
   const [form, setForm] = useState({ name: '', price: '', image_url: '' })
-  const [editProduct, setEditProduct] = useState<any | null>(null)
+  const [editProduct, setEditProduct] = useState<Product | null>(null)
 
   useEffect(() => {
     axios.get('/api/admin/products')
@@ -54,6 +62,7 @@ const ProductsSection = () => {
   }
 
   const handleUpdate = async () => {
+    if(editProduct){
     try {
       await axios.put(`/api/admin/products/${editProduct.id}`, {
         name: editProduct.name,
@@ -69,7 +78,7 @@ const ProductsSection = () => {
     } catch {
       toast.error('Error updating product')
     }
-  }
+  }}
 
   return (
     <div className="p-4">

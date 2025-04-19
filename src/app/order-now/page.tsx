@@ -6,12 +6,19 @@ import toast from "react-hot-toast";
 import { useSelector } from 'react-redux';
 import { RootState } from '../../../store';
 
+type Product = {
+  id: number;
+  name: string;
+  price: number;
+  image_url: string;
+};
+
 const OrderPage = () => {
-  const [products, setProducts] = useState<any[]>([]);
+  const [products, setProducts] = useState<Product[]>([]);
   const user = useSelector((state: RootState) => state.user.user);
   const [selectedItems, setSelectedItems] = useState<{ product_id: number; quantity: number }[]>([]);
   const [form, setForm] = useState({
-    user_email: user.user,
+    user_email: user?.user,
     contact_name: '',
     contact_phone: '',
     address: ''
@@ -45,13 +52,13 @@ const OrderPage = () => {
     }
     else{
     try {
-      const res = await axios.post('/api/order-now', {
+      await axios.post('/api/order-now', {
         ...form,
         items: selectedItems
       });
       toast.success("Order Placed successfully!");
       setSelectedItems([]);
-    } catch (err) {
+    } catch {
       toast.error('Failed to place order.');
     }}
   };

@@ -11,8 +11,13 @@ const Signup = () => {
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const router = useRouter();
+  const [user, setUser] = useState<string | null>(null);
 
-  const user = localStorage.getItem('user')
+  useEffect(() => {
+    const storedUser = localStorage.getItem('user');
+    setUser(storedUser);
+  }, []);
+
   useEffect(() => {
     if (user) {
       router.push("/dashboard");
@@ -26,8 +31,7 @@ const Signup = () => {
       await createUserWithEmailAndPassword(auth, email, password);
       toast.success("User Registered Successfully")
       router.push("/login");
-    } catch (error : any) {
-      console.log(error);
+    } catch (error) {
       toast.error(error.message);
     } finally {
       setLoading(false);

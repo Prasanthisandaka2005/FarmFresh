@@ -1,11 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server';
 import pool from '../../../../../libs/db';
 
-export async function GET(req: NextRequest, { params }: { params: { id: string } }) {
-  const { id } = params;
+export async function GET(req: NextRequest, context: { params: { id: string } }) {
+  const { id } = await context.params; 
 
   try {
-    // Get order
     const orderRes = await pool.query('SELECT * FROM orders WHERE id = $1', [id]);
     if (orderRes.rows.length === 0) {
       return NextResponse.json({ error: 'Order not found' }, { status: 404 });
@@ -13,7 +12,6 @@ export async function GET(req: NextRequest, { params }: { params: { id: string }
 
     const order = orderRes.rows[0];
 
-    // Get items from order_items + product name
     const itemsRes = await pool.query(
       `SELECT oi.quantity, p.name, p.price 
        FROM order_items oi

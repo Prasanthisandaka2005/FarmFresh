@@ -6,6 +6,6 @@ export async function GET() {
     const res = await pool.query('SELECT * FROM products');
     return NextResponse.json(res.rows);
   } catch (err) {
-    return NextResponse.json({ error: 'Error fetching products' }, { status: 500 });
+    return NextResponse.json({ error: err }, { status: 500 });
   }
 }

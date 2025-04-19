@@ -4,6 +4,14 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import toast from "react-hot-toast";
 
+type Order = {
+  id: number;
+  user_email: string;
+  items: string;
+  total: number;
+  status: 'Pending' | 'Shipped' | 'Delivered';
+};
+
 const OrdersSection = () => {
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -28,7 +36,6 @@ const OrdersSection = () => {
     try {
       await axios.put(`/api/admin/order/${orderId}`, { status: newStatus });
       
-      // Update the order status in the state
       setOrders(prev => prev.map(order => 
         order.id === orderId ? { ...order, status: newStatus } : order
       ));
@@ -58,7 +65,7 @@ const OrdersSection = () => {
           </tr>
         </thead>
         <tbody>
-          {orders.map((order: any) => (
+          {orders.map((order : Order) => (
             <tr key={order.id}>
               <td className="border p-2">{order.id}</td>
               <td className="border p-2">{order.user_email}</td>

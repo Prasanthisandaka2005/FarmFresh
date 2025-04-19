@@ -4,13 +4,26 @@ import axios from "axios";
 import { useEffect, useState } from "react"
 import Link from "next/link";
 
+interface Order {
+  id: number;
+  contact_name: string;
+  contact_phone: string;
+  status: string;
+  address: string;
+}
 
 const MyOrders = () => {
     const [myorders, setMyorders] = useState([]);
     const [loading, setLoading] = useState(false);
-    const user = localStorage.getItem('user')
+    const [user, setUser] = useState<string | null>(null);
+
+  useEffect(() => {
+    const storedUser = localStorage.getItem('user');
+    setUser(storedUser);
+  }, []);
 
     useEffect(() => {
+        if(!user) return;
         setLoading(true);
         axios.get('/api/my-orders', {
             headers: {
@@ -24,7 +37,7 @@ const MyOrders = () => {
                 console.log(e);
                 setLoading(false);
             });
-    }, []);
+    }, [user]);
 
     if (loading) {
         return (
@@ -41,7 +54,7 @@ const MyOrders = () => {
                 <p>No orders yet.</p>
             ) : (
                 <div className="grid gap-4 grid-cols-4">
-                    {myorders.map((order: any) => (
+                    {myorders.map((order: Order) => (
                         <Link
                             key={order.id}
                             href={`/orders/${order.id}`}
