@@ -20,20 +20,24 @@ const OrderPage = () => {
   const [selectedItems, setSelectedItems] = useState<{ product_id: number; quantity: number }[]>([]);
   const [placingOrder, setPlacingOrder] = useState(false);
   const [user, setUser] = useState<string | null>(null);
+  const [form, setForm] = useState({
+      user_email: user,
+      contact_name: '',
+      contact_phone: '',
+      address: ''
+    });
 
   useEffect(() => {
-    if (typeof window !== "undefined") {
-    const storedUser = Cookies.get('user');
-    setUser(storedUser ?? null);
-    }
-  }, []);
+  if (typeof window !== "undefined") {
+    const storedUser = Cookies.get('user'); 
+    const userEmail = storedUser !== undefined ? storedUser : null;
+    setForm({ ...form, user_email: userEmail });
+    setUser(userEmail);
+  }
+}, []);
 
-  const [form, setForm] = useState({
-    user_email: user,
-    contact_name: '',
-    contact_phone: '',
-    address: ''
-  });
+
+ 
 
   useEffect(() => {
   if (reduxProducts.length > 0) {
