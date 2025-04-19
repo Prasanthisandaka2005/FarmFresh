@@ -7,6 +7,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { setProducts } from '../../../store/productsSlice';
 import { RootState } from '../../../store';
 import Loader from '../Loader/Loader';
+import Cookies from 'js-cookie';
 
 const Products = () => {
   const [loading, setLoading] = useState<boolean>(true);
@@ -16,12 +17,13 @@ const Products = () => {
   const products = useSelector((state: RootState) => state.products.products);
 
   useEffect(() => {
-    const user = localStorage.getItem('user');
-    if (!user) {
-      router.push('/login');
-      return;
+    if (typeof window !== 'undefined') {
+      const user = Cookies.get('user');
+      if (!user) {
+        router.push('/login');
+        return;
+      }
     }
-
     const fetchProducts = async () => {
       if (products.length > 0) {
         setLoading(false);
@@ -41,9 +43,7 @@ const Products = () => {
   }, [router, dispatch, products.length]);
 
   if (loading) {
-    return (
-      <Loader/>
-    );
+    return <Loader />;
   }
 
   return (
@@ -58,7 +58,7 @@ const Products = () => {
             <img
               src={p.image_url}
               alt={p.name}
-              className="w-30 h-30 object-cover mb-2 rounded"
+              className="w  w-30 h-30 object-cover mb-2 rounded"
             />
             <h3 className="text-lg font-semibold">{p.name}</h3>
             <p>Price: ₹{p.price} per kg</p>

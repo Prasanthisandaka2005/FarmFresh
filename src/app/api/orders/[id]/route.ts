@@ -1,9 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import pool from '../../../../../libs/db';
 
-export async function GET(req: NextRequest, context: { params: { id: string } }) {
-  const { id } = await context.params; 
-
+export async function GET(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
+    const id = (await params).id;
   try {
     const orderRes = await pool.query('SELECT * FROM orders WHERE id = $1', [id]);
     if (orderRes.rows.length === 0) {

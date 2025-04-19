@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import axios from 'axios'
+import axios, { AxiosError } from 'axios'
 import toast from 'react-hot-toast'
 
 type Product = {
@@ -9,6 +9,10 @@ type Product = {
   name: string;
   price: string;
   image_url: string;
+}
+
+interface ErrorResponse {
+  error: string;
 }
 
 const ProductsSection = () => {
@@ -44,8 +48,9 @@ const handleDelete = async (id: number) => {
     setProducts(prevProducts => prevProducts.filter(p => p.id !== id))
     toast.success('Product deleted')
   } catch (e) {
-    const message = e?.response?.data?.error || 'Error deleting product'
-    toast.error(message)
+    const error = e as AxiosError<ErrorResponse>;
+    const message = error?.response?.data?.error || 'Error deleting product';
+    toast.error(message);
   } finally {
     setDeletingId(null)
   }

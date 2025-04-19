@@ -1,8 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import pool from '../../../../../../libs/db';
 
-export async function PUT(req: NextRequest, context: { params: { id: string } }) {
-  const { id } = await context.params;
+export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
+  const id = (await params).id;
   const { name, price, image_url } = await req.json();
   
   await pool.query(
@@ -13,8 +13,8 @@ export async function PUT(req: NextRequest, context: { params: { id: string } })
   return NextResponse.json({ message: 'Product updated' });
 }
 
-export async function DELETE(req: NextRequest, context: { params: { id: string } }) {
-  const { id } = await context.params;
+export async function DELETE(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
+  const id = (await params).id;
 
   try {
     const res = await pool.query(
@@ -22,7 +22,8 @@ export async function DELETE(req: NextRequest, context: { params: { id: string }
       [id]
     );
 
-    if (res.rowCount > 0) {
+    const rowCount = res.rowCount ?? 0;
+    if (rowCount > 0) {
       return NextResponse.json(
         { error: 'Cannot delete. Product is part of an existing order.' },
         { status: 400 }

@@ -4,6 +4,7 @@ import axios from "axios";
 import { useEffect, useState } from "react"
 import Link from "next/link";
 import Loader from "../Loader/Loader";
+import Cookies from 'js-cookie';
 
 interface Order {
   id: number;
@@ -19,8 +20,10 @@ const MyOrders = () => {
     const [user, setUser] = useState<string | null>(null);
 
   useEffect(() => {
-    const storedUser = localStorage.getItem('user');
-    setUser(storedUser);
+    if (typeof window !== "undefined") {
+    const storedUser = Cookies.get('user');
+    setUser(storedUser ?? null);
+    }
   }, []);
 
     useEffect(() => {

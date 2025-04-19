@@ -6,6 +6,7 @@ import { auth } from "../../../utils/firebase";
 import { createUserWithEmailAndPassword } from "firebase/auth";
 import toast from "react-hot-toast";
 import Link from "next/link";
+import Cookies from 'js-cookie';
 
 const Signup = () => {
   const [email, setEmail] = useState("");
@@ -15,8 +16,9 @@ const Signup = () => {
   const [user, setUser] = useState<string | null>(null);
 
   useEffect(() => {
-    const storedUser = localStorage.getItem('user');
-    setUser(storedUser);
+    if (typeof window !== "undefined") {
+    const storedUser = Cookies.get('user');
+    setUser(storedUser ?? null);}
   }, []);
 
   useEffect(() => {
@@ -33,7 +35,12 @@ const Signup = () => {
       toast.success("User Registered Successfully")
       router.push("/login");
     } catch (error) {
-      toast.error(error.message);
+      console.error("Error logging in:", error);
+      if (error instanceof Error) {
+        toast.error(error.message);
+      } else {
+        toast.error('An unknown error occurred');
+      }
     } finally {
       setLoading(false);
     }

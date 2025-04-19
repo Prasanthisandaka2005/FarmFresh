@@ -3,15 +3,18 @@ import { useEffect } from 'react';
 import { useDispatch } from "react-redux";
 import { setUser } from "../../store/userSlice";
 import Link from 'next/link';
+import Cookies from 'js-cookie'
 
 export default function Home() {
   const dispatch = useDispatch();
 
   useEffect(() => {
-  const user = localStorage.getItem('user');
-  if (user) {
-    dispatch(setUser({ user }));
-  }
+    if (typeof window !== 'undefined') {
+      const user = Cookies.get('user');
+      if (user) {
+        dispatch(setUser({ user }));
+      }
+    }
   }, []);
 
   return (

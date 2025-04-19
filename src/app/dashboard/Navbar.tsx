@@ -6,6 +6,7 @@ import { signOut } from "firebase/auth";
 import { auth } from "../../../utils/firebase";
 import { useDispatch } from "react-redux";
 import { clearUser } from "../../../store/userSlice";
+import Cookies from 'js-cookie';
 
 const navItems = [
   { label: 'Products', href: '/dashboard' },
@@ -20,12 +21,14 @@ const Navbar = () => {
 
   const handleLogout = async () => {
     try {
-      await signOut(auth)
-      dispatch(clearUser())
-      localStorage.removeItem('user')
-      router.push("/login")
+      await signOut(auth);
+      dispatch(clearUser());
+      if (typeof window !== 'undefined') {
+        Cookies.remove('user');
+      }
+      router.push("/login");
     } catch (error) {
-      console.error("Logout failed:", error)
+      console.error("Logout failed:", error);
     }
   };
 

@@ -9,13 +9,12 @@ type Order = {
   user_email: string;
   items: string;
   total: number;
-  status: 'Pending' | 'Shipped' | 'Delivered';
+  status: 'Pending' | 'Shipped' | 'Delivered'; 
 };
 
 const OrdersSection = () => {
-  const [orders, setOrders] = useState([]);
+  const [orders, setOrders] = useState<Order[]>([]); 
   const [loading, setLoading] = useState(true);
-  console.log(orders)
 
   useEffect(() => {
     axios.get('/api/admin/order')
@@ -29,7 +28,7 @@ const OrdersSection = () => {
       });
   }, []);
 
-  const handleStatusChange = async (orderId: number, newStatus: string) => {
+  const handleStatusChange = async (orderId: number, newStatus: 'Pending' | 'Shipped' | 'Delivered') => {
     const isConfirmed = window.confirm('Are you sure you want to change the order status?');
     if (!isConfirmed) return;
 
@@ -71,7 +70,7 @@ const OrdersSection = () => {
               <td className="border p-2">
                 <select
                   defaultValue={order.status}
-                  onChange={(e) => handleStatusChange(order.id, e.target.value)}
+                  onChange={(e) => handleStatusChange(order.id, e.target.value as 'Pending' | 'Shipped' | 'Delivered')}
                   className="border px-2 py-1 rounded"
                 >
                   <option>Pending</option>
