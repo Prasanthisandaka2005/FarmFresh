@@ -3,6 +3,7 @@
 import axios from "axios";
 import { useEffect, useState } from "react"
 import Link from "next/link";
+import Loader from "../Loader/Loader";
 
 interface Order {
   id: number;
@@ -41,9 +42,7 @@ const MyOrders = () => {
 
     if (loading) {
         return (
-            <div className="flex justify-center items-center min-h-screen">
-                <div className="loader border-t-4 border-blue-500 rounded-full w-12 h-12 animate-spin"></div>
-            </div>
+            <Loader/>
         );
     }
 

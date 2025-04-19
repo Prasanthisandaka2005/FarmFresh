@@ -5,6 +5,7 @@ import { auth } from '../../../utils/firebase';
 import { onAuthStateChanged, User } from 'firebase/auth';
 import OrdersSection from './orders/OrdersSection';
 import ProductsSection from './products/ProductsSection';
+import Loader from '../Loader/Loader';
 
 const AdminPage = () => {
   const [userEmail, setUserEmail] = useState<string | null>(null);
@@ -21,7 +22,7 @@ const AdminPage = () => {
   }, []);
 
   if (isLoading) {
-    return <div className="text-center mt-10">Loading...</div>;
+    return <div className="text-center mt-10"><Loader/></div>;
   }
 
   if (!userEmail || userEmail !== 'adminprasanthi@gmail.com') {

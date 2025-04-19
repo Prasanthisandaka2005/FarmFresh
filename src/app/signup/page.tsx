@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { auth } from "../../../utils/firebase";
 import { createUserWithEmailAndPassword } from "firebase/auth";
 import toast from "react-hot-toast";
+import Link from "next/link";
 
 const Signup = () => {
   const [email, setEmail] = useState("");
@@ -73,7 +74,9 @@ const Signup = () => {
             {loading ? "Creating Account..." : "Sign Up"}
           </button>
         </form>
-        <p className="mt-3 text-gray-600">Already have an account <a href="/login" className="text-blue-600 font-bold">Login</a></p>
+        <p className="mt-3 text-gray-600">Already have an account
+          <Link href="/login" className="text-blue-600 font-bold"> Login</Link>
+        </p>
       </div>
     </div>
   );

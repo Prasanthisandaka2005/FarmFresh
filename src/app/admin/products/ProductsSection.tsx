@@ -91,7 +91,7 @@ const ProductsSection = () => {
       <button className="bg-green-600 text-white px-4 py-2 rounded" onClick={handleAdd}>Add Product</button>
 
       <h2 className="text-xl font-bold my-6">All Products</h2>
-      {loading ? <p>Loading...</p> : (
+      {loading ? <p>Loading Products...</p> : (
         <table className="w-full table-auto border-collapse border border-gray-300">
           <thead>
             <tr className="bg-gray-100">
@@ -109,9 +109,9 @@ const ProductsSection = () => {
                 <td className="border p-2">{product.name}</td>
                 <td className="border p-2">₹{product.price}</td>
                 <td className="border p-2"><img src={product.image_url} className="h-12 w-12 object-cover" /></td>
-                <td className="border p-2 flex gap-2">
-                  <button className="bg-red-500 text-white px-2 py-1 rounded" onClick={() => handleDelete(product.id)}>Delete</button>
-                  <button className="bg-blue-500 text-white px-2 py-1 rounded" onClick={() => setEditProduct(product)}>Edit</button>
+                <td className="border p-4 flex gap-2">
+                  <button className="bg-red-400 text-white px-2 py-1 rounded" onClick={() => handleDelete(product.id)}>Delete</button>
+                  <button className="bg-blue-400 text-white px-2 py-1 rounded" onClick={() => setEditProduct(product)}>Edit</button>
                 </td>
               </tr>
             ))}
@@ -121,7 +121,7 @@ const ProductsSection = () => {
 
       {/* Edit Modal */}
       {editProduct && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
+        <div className="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center">
           <div className="bg-white p-6 rounded shadow-lg w-96">
             <h2 className="text-xl font-bold mb-4">Edit Product</h2>
             <input

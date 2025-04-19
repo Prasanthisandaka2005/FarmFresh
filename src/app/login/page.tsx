@@ -7,6 +7,7 @@ import { signInWithEmailAndPassword } from "firebase/auth";
 import toast from "react-hot-toast";
 import { useDispatch } from "react-redux";
 import { setUser } from "../../../store/userSlice";
+import Link from "next/link";
 
 const Login = () => {
   const [email, setEmail] = useState("");
@@ -34,8 +35,8 @@ const [user, setuser] = useState<string | null>(null);
     try {
       await signInWithEmailAndPassword(auth, email, password);
       toast.success("Logged in successfully!")
-      dispatch(setUser({ user: email }));
-      localStorage.setItem('user', email);
+      const mail = localStorage.setItem('user', email);
+      dispatch(setUser({ user: mail }));
       router.push("/dashboard");
     } catch (error) {
       console.error("Error logging in:", error);
@@ -80,7 +81,9 @@ const [user, setuser] = useState<string | null>(null);
             {loading ? "Logging in..." : "Login"}
           </button>
         </form>
-        <p className="mt-3 text-gray-600">Dont have an account <a href="/signup" className="text-green-600 font-bold">SignUp</a></p>
+        <p className="mt-3 text-gray-600">Don’t have an account?{" "}
+          <Link href="/signup" className="text-green-600 font-bold">SignUp</Link>
+        </p>
       </div>
     </div>
   );

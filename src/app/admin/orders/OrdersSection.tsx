@@ -58,8 +58,6 @@ const OrdersSection = () => {
           <tr className="bg-gray-100">
             <th className="border p-2">Order ID</th>
             <th className="border p-2">Buyer Email</th>
-            <th className="border p-2">Items</th>
-            <th className="border p-2">Total</th>
             <th className="border p-2">Status</th>
             <th className="border p-2">Update</th>
           </tr>
@@ -69,8 +67,6 @@ const OrdersSection = () => {
             <tr key={order.id}>
               <td className="border p-2">{order.id}</td>
               <td className="border p-2">{order.user_email}</td>
-              <td className="border p-2 whitespace-pre-wrap">{order.items}</td>
-              <td className="border p-2">₹{order.total}</td>
               <td className="border p-2">{order.status}</td>
               <td className="border p-2">
                 <select

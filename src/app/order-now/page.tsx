@@ -14,19 +14,33 @@ type Product = {
 };
 
 const OrderPage = () => {
-  const [products, setProducts] = useState<Product[]>([]);
+  const reduxProducts = useSelector((state: RootState) => state.products.products);
   const user = useSelector((state: RootState) => state.user.user);
+  const [products, setProducts] = useState<Product[]>([]);
   const [selectedItems, setSelectedItems] = useState<{ product_id: number; quantity: number }[]>([]);
+  const [loading,setLoading] = useState(true)
   const [form, setForm] = useState({
-    user_email: user?.user,
+    user_email: user,
     contact_name: '',
     contact_phone: '',
     address: ''
   });
 
   useEffect(() => {
-    axios.get('/api/products').then((res) => setProducts(res.data)).catch((e)=>console.log(e));
-  }, []);
+  if (reduxProducts.length > 0) {
+    setProducts(
+      reduxProducts.map(p => ({
+        ...p,
+        id: Number(p.id) 
+      }))
+    );
+  } else {
+    axios.get('/api/products')
+      .then((res) => setProducts(res.data))
+      .catch((e) => console.log(e));
+  }
+}, [reduxProducts]);
+
 
   const toggleProduct = (productId: number) => {
     const exists = selectedItems.find(item => item.product_id === productId);
@@ -46,11 +60,15 @@ const OrderPage = () => {
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if(selectedItems.length == 0){
-       alert("Please Select Items")
-    }
-    else{
+  e.preventDefault();
+
+  const invalidItems = selectedItems.some(item => item.quantity <= 0);
+
+  if (selectedItems.length === 0) {
+    alert("Please Select Items");
+  } else if (invalidItems) {
+    alert("Please make sure all quantities are greater than zero.");
+  } else {
     try {
       await axios.post('/api/order-now', {
         ...form,
@@ -60,61 +78,61 @@ const OrderPage = () => {
       setSelectedItems([]);
     } catch {
       toast.error('Failed to place order.');
-    }}
-  };
+    }
+  }
+};
+
 
   return (
     <div className="flex gap-6 max-w-6xl mx-auto p-4">
-      {/* Left Side - Form */}
       <div className="w-1/2 space-y-4">
         <form onSubmit={handleSubmit} className="w-1/2 space-y-4">
-        <h2 className="text-2xl font-bold">Place Order</h2>
-        <input
-          type="text"
-          placeholder="Name"
-          className="border p-2 rounded w-full"
-          value={form.contact_name}
-          onChange={(e) => setForm({ ...form, contact_name: e.target.value })}
-          required
-        />
-        <input
-          type="text"
-          placeholder="Phone"
-          className="border p-2 rounded w-full"
-          value={form.contact_phone}
-          onChange={(e) => setForm({ ...form, contact_phone: e.target.value })}
-          required
-        />
-        <textarea
-          placeholder="Address"
-          className="border p-2 rounded w-full"
-          value={form.address}
-          onChange={(e) => setForm({ ...form, address: e.target.value })}
-          required
-        />
-        <button
-          type="submit"
-          className="bg-green-600 text-white py-2 px-4 rounded hover:bg-green-700"
-        >
-          Submit Order
-        </button>
-      </form>
+          <h2 className="text-2xl font-bold">Place Order</h2>
+          <input
+            type="text"
+            placeholder="Name"
+            className="border p-2 rounded w-full"
+            value={form.contact_name}
+            onChange={(e) => setForm({ ...form, contact_name: e.target.value })}
+            required
+          />
+          <input
+            type="text"
+            placeholder="Phone"
+            className="border p-2 rounded w-full"
+            value={form.contact_phone}
+            onChange={(e) => setForm({ ...form, contact_phone: e.target.value })}
+            required
+          />
+          <textarea
+            placeholder="Address"
+            className="border p-2 rounded w-full"
+            value={form.address}
+            onChange={(e) => setForm({ ...form, address: e.target.value })}
+            required
+          />
+          <button
+            type="submit"
+            className="bg-green-600 text-white py-2 px-4 rounded hover:bg-green-700"
+          >
+            Submit Order
+          </button>
+        </form>
       </div>
 
-      {/* Right Side - Scrollable Products */}
-      <div className="w-1/2 h-[600px] overflow-y-auto border p-4 rounded">
+      <div className="w-1/2 h-[600px] overflow-y-auto border border-gray-200 p-4 rounded">
         <h3 className="text-xl font-semibold mb-4">Select Products</h3>
-        <div className="grid grid-cols-2 gap-4">
-          {products.map((p) => {
+        <div className="grid grid-cols-3 gap-4">
+          {products.length !== 0 ? products.map((p) => {
             const selected = selectedItems.find(item => item.product_id === p.id);
             return (
-              <div key={p.id} className="border p-3 rounded">
-                <img src={p.image_url} className="w-full h-32 object-cover rounded mb-1" />
+              <div key={p.id} className="bg-white border border-gray-300 rounded-xl p-3">
+                <img src={p.image_url} className="w-full h-30 object-cover mb-2 rounded" />
                 <h4 className="font-medium">{p.name}</h4>
                 <p className="text-sm">₹{p.price}</p>
                 <button
                   onClick={() => toggleProduct(p.id)}
-                  className="mt-1 text-sm text-blue-600 underline"
+                 className="cursor-pointer p-1 text-xs border border-[#318616] text-[#318616] bg-[#f7fff9] rounded-md flex items-center justify-center"
                 >
                   {selected ? 'Remove' : 'Add'}
                 </button>
@@ -129,7 +147,8 @@ const OrderPage = () => {
                 )}
               </div>
             );
-          })}
+          }):
+          <p>Loading...</p>}
         </div>
       </div>
     </div>
