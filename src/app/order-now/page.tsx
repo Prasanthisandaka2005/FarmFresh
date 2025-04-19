@@ -18,7 +18,7 @@ const OrderPage = () => {
   const user = useSelector((state: RootState) => state.user.user);
   const [products, setProducts] = useState<Product[]>([]);
   const [selectedItems, setSelectedItems] = useState<{ product_id: number; quantity: number }[]>([]);
-  const [loading,setLoading] = useState(true)
+  const [placingOrder, setPlacingOrder] = useState(false);
   const [form, setForm] = useState({
     user_email: user,
     contact_name: '',
@@ -69,6 +69,7 @@ const OrderPage = () => {
   } else if (invalidItems) {
     alert("Please make sure all quantities are greater than zero.");
   } else {
+    setPlacingOrder(true)
     try {
       await axios.post('/api/order-now', {
         ...form,
@@ -78,6 +79,9 @@ const OrderPage = () => {
       setSelectedItems([]);
     } catch {
       toast.error('Failed to place order.');
+    }
+    finally{
+      setPlacingOrder(false)
     }
   }
 };
@@ -114,8 +118,9 @@ const OrderPage = () => {
           <button
             type="submit"
             className="bg-green-600 text-white py-2 px-4 rounded hover:bg-green-700"
+            disabled={placingOrder}
           >
-            Submit Order
+            {placingOrder ? 'Ordering...' : 'Place Order'}
           </button>
         </form>
       </div>

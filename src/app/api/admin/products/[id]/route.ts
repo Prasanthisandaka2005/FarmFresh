@@ -1,17 +1,20 @@
-import { NextRequest, NextResponse } from 'next/server'
-import pool from '../../../../../../libs/db'
+import { NextRequest, NextResponse } from 'next/server';
+import pool from '../../../../../../libs/db';
 
-export async function PUT(req: NextRequest, { params }: { params: { id: string } }) {
-  const { name, price, image_url } = await req.json()
+export async function PUT(req: NextRequest, context: { params: { id: string } }) {
+  const { id } = await context.params;
+  const { name, price, image_url } = await req.json();
+  
   await pool.query(
     'UPDATE products SET name = $1, price = $2, image_url = $3 WHERE id = $4',
-    [name, price, image_url, params.id]
-  )
-  return NextResponse.json({ message: 'Product updated' })
+    [name, price, image_url, id]
+  );
+
+  return NextResponse.json({ message: 'Product updated' });
 }
 
-export async function DELETE(_: NextRequest, { params }: { params: { id: string } }) {
-  const id = params.id;
+export async function DELETE(req: NextRequest, context: { params: { id: string } }) {
+  const { id } = await context.params;
 
   try {
     const res = await pool.query(

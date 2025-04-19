@@ -4,7 +4,6 @@ import { useEffect, useState } from 'react'
 import axios from 'axios'
 import toast from 'react-hot-toast'
 
-
 type Product = {
   id: number;
   name: string;
@@ -15,8 +14,12 @@ type Product = {
 const ProductsSection = () => {
   const [products, setProducts] = useState<Product[]>([])
   const [loading, setLoading] = useState(true)
+  const [isAdding, setIsAdding] = useState(false)
+  const [isUpdating, setIsUpdating] = useState(false)
   const [form, setForm] = useState({ name: '', price: '', image_url: '' })
   const [editProduct, setEditProduct] = useState<Product | null>(null)
+  const [deletingId, setDeletingId] = useState<number | null>(null)
+
 
   useEffect(() => {
     axios.get('/api/admin/products')
@@ -30,19 +33,24 @@ const ProductsSection = () => {
       })
   }, [])
 
-  const handleDelete = async (id: number) => {
-    const confirm = window.confirm('Are you sure you want to delete this product?')
-    if (!confirm) return
 
-    try {
-      await axios.delete(`/api/admin/products/${id}`)
-      setProducts(products.filter(p => p.id !== id))
-      toast.success('Product deleted')
-    } catch (e) {
-      const message = e?.response?.data?.error || 'Error deleting product'
-      toast.error(message)
-    }
+const handleDelete = async (id: number) => {
+  const confirmDelete = window.confirm('Are you sure you want to delete this product?')
+  if (!confirmDelete) return
+
+  try {
+    setDeletingId(id)
+    await axios.delete(`/api/admin/products/${id}`)
+    setProducts(prevProducts => prevProducts.filter(p => p.id !== id))
+    toast.success('Product deleted')
+  } catch (e) {
+    const message = e?.response?.data?.error || 'Error deleting product'
+    toast.error(message)
+  } finally {
+    setDeletingId(null)
   }
+}
+
 
   const handleAdd = async () => {
     const { name, price, image_url } = form
@@ -52,33 +60,42 @@ const ProductsSection = () => {
     }
 
     try {
-      const res = await axios.post('/api/admin/products', form)
-      setProducts([res.data, ...products])
+      setIsAdding(true)
+      await axios.post('/api/admin/products', form)
       toast.success('Product added')
       setForm({ name: '', price: '', image_url: '' })
+
+      const res = await axios.get('/api/admin/products')
+      setProducts(res.data)
     } catch {
       toast.error('Error adding product')
+    } finally {
+      setIsAdding(false)
     }
   }
 
   const handleUpdate = async () => {
-    if(editProduct){
-    try {
-      await axios.put(`/api/admin/products/${editProduct.id}`, {
-        name: editProduct.name,
-        price: editProduct.price,
-        image_url: editProduct.image_url
-      })
+    if (editProduct) {
+      try {
+        setIsUpdating(true)
+        await axios.put(`/api/admin/products/${editProduct.id}`, {
+          name: editProduct.name,
+          price: editProduct.price,
+          image_url: editProduct.image_url
+        })
 
-      toast.success('Product updated')
-      setProducts(prev =>
-        prev.map(p => p.id === editProduct.id ? editProduct : p)
-      )
-      setEditProduct(null)
-    } catch {
-      toast.error('Error updating product')
+        toast.success('Product updated')
+        setProducts(prev =>
+          prev.map(p => p.id === editProduct.id ? editProduct : p)
+        )
+        setEditProduct(null)
+      } catch {
+        toast.error('Error updating product')
+      } finally {
+        setIsUpdating(false)
+      }
     }
-  }}
+  }
 
   return (
     <div className="p-4">
@@ -88,7 +105,13 @@ const ProductsSection = () => {
         <input className="border p-2" placeholder="Price" value={form.price} onChange={e => setForm({ ...form, price: e.target.value })} />
         <input className="border p-2" placeholder="Image URL" value={form.image_url} onChange={e => setForm({ ...form, image_url: e.target.value })} />
       </div>
-      <button className="bg-green-600 text-white px-4 py-2 rounded" onClick={handleAdd}>Add Product</button>
+      <button
+        className="bg-green-600 text-white px-4 py-2 rounded disabled:opacity-50"
+        onClick={handleAdd}
+        disabled={isAdding}
+      >
+        {isAdding ? 'Adding...' : 'Add Product'}
+      </button>
 
       <h2 className="text-xl font-bold my-6">All Products</h2>
       {loading ? <p>Loading Products...</p> : (
@@ -110,8 +133,19 @@ const ProductsSection = () => {
                 <td className="border p-2">₹{product.price}</td>
                 <td className="border p-2"><img src={product.image_url} className="h-12 w-12 object-cover" /></td>
                 <td className="border p-4 flex gap-2">
-                  <button className="bg-red-400 text-white px-2 py-1 rounded" onClick={() => handleDelete(product.id)}>Delete</button>
-                  <button className="bg-blue-400 text-white px-2 py-1 rounded" onClick={() => setEditProduct(product)}>Edit</button>
+                  <button
+                    className="bg-red-400 text-white px-2 py-1 rounded disabled:opacity-50"
+                    onClick={() => handleDelete(product.id)}
+                    disabled={deletingId === product.id} 
+                  >
+                    {deletingId === product.id ? 'Deleting...' : 'Delete'}
+                  </button>
+                  <button
+                    className="bg-blue-400 text-white px-2 py-1 rounded"
+                    onClick={() => setEditProduct(product)}
+                  >
+                    Edit
+                  </button>
                 </td>
               </tr>
             ))}
@@ -144,7 +178,13 @@ const ProductsSection = () => {
             />
             <div className="flex justify-end gap-2">
               <button onClick={() => setEditProduct(null)} className="px-4 py-2 bg-gray-300 rounded">Cancel</button>
-              <button onClick={handleUpdate} className="px-4 py-2 bg-green-600 text-white rounded">Update</button>
+              <button
+                onClick={handleUpdate}
+                className="px-4 py-2 bg-green-600 text-white rounded disabled:opacity-50"
+                disabled={isUpdating}
+              >
+                {isUpdating ? 'Updating...' : 'Update'}
+              </button>
             </div>
           </div>
         </div>
