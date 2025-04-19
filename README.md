@@ -1,36 +1,76 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+**Order Placement Application**
+**Overview**
+This is a simple and functional web application for placing product orders.
+Users can select products, specify quantities, fill out their contact details, and submit an order.
+The application ensures proper validations, handles important edge cases, and provides a smooth user experience.
 
-## Getting Started
+**Features**
+View available products.
+Select and deselect products.
+Specify the quantity for each selected product.
+Submit contact information (name, phone, and address).
+Place an order with proper validation.
+Toast notifications for success and failure.
+Edge case handling for empty selection and invalid quantities.
+Integration with the backend API for order creation.
 
-First, run the development server:
+**Technologies Used**
+React.js with TypeScript
+Redux Toolkit (for product state management)
+Axios (for API requests)
+js-cookie (to manage user email from cookies)
+Tailwindcss (for styling)
+react-hot-toast (for toast notifications)
 
-```bash
+**How to Run Locally**
+Clone the repository:
+git clone https://github.com/your-username/your-repo.git
+cd farmfresh-orders
+npm install
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+Visit http://localhost:3000 to use the application.
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+**Folder Structure**
+AGRO ASSIGNMENT/
+└── farmfresh-orders/
+    ├── libs/
+    ├── public/
+    ├── src/
+    │   └── app/
+    │       ├── admin/
+    │       ├── api/
+    │       ├── dashboard/
+    │       ├── Loader/
+    │       ├── login/
+    │       ├── my-orders/
+    │       ├── order-now/
+    │       ├── orders/
+    │       ├── signup/
+    │       ├── favicon.ico
+    │       ├── globals.css
+    │       ├── layout.tsx
+    │       ├── LayoutWrapper.tsx
+    │       └── page.tsx
+    ├── store/
+    │   ├── index.ts
+    │   ├── productsSlice.ts
+    │   ├── userSlice.ts
+    ├── utils/
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+**Known Limitations**
+Responsiveness:
+A full responsive design has not yet been implemented.
+(Reason: Exams start on Monday.)
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+**Testing**
+Verified that:
+Products can be selected and quantities updated.
+Orders are not placed without selecting products.
+Quantities must be greater than zero.
+API calls are successfully made and responses handled.
+Edge cases, such as empty forms or invalid input, are managed.
 
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+**Future Improvements**
+Make the UI fully responsive.
+Add a better success/error UI after placing an order.
+Enhance form validation (e.g., phone number validation).
