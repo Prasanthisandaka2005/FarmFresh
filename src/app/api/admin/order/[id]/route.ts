@@ -19,6 +19,7 @@ export async function PUT(req: NextRequest, { params }: { params: { id: string }
 
     return NextResponse.json({ message: 'Order status updated', order: result.rows[0] });
   } catch (err) {
-    return NextResponse.json({ error: err }, { status: 500 });
+    console.error(err);
+    return NextResponse.json({ error: 'Error updating status' }, { status: 500 });
   }
 }
