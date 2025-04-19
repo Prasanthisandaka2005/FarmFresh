@@ -5,6 +5,7 @@ import axios from 'axios';
 import toast from "react-hot-toast";
 import { useSelector } from 'react-redux';
 import { RootState } from '../../../store';
+import Cookies from 'js-cookie';
 
 type Product = {
   id: number;
@@ -15,10 +16,18 @@ type Product = {
 
 const OrderPage = () => {
   const reduxProducts = useSelector((state: RootState) => state.products.products);
-  const user = useSelector((state: RootState) => state.user.user);
   const [products, setProducts] = useState<Product[]>([]);
   const [selectedItems, setSelectedItems] = useState<{ product_id: number; quantity: number }[]>([]);
   const [placingOrder, setPlacingOrder] = useState(false);
+  const [user, setUser] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+    const storedUser = Cookies.get('user');
+    setUser(storedUser ?? null);
+    }
+  }, []);
+
   const [form, setForm] = useState({
     user_email: user,
     contact_name: '',
