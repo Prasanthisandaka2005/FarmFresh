@@ -1,9 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
 import pool from '../../../../../../libs/db';
 
-export async function PUT(req: NextRequest, context: { params: { id: string } }) {
+export async function PUT(req: NextRequest, { params }: { params: { id: string } }) {
   const { status } = await req.json();
-  const id = await context.params;
+  const id = params.id;
 
   const validStatuses = ['Pending', 'Shipped', 'Delivered'];
   if (!validStatuses.includes(status)) {
