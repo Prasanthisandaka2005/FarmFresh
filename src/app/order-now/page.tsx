@@ -27,11 +27,25 @@ const OrderPage = () => {
       address: ''
     });
 
-  useEffect(() => {
+ useEffect(() => {
   if (typeof window !== "undefined") {
     const storedUser = Cookies.get('user'); 
-    const userEmail = storedUser !== undefined ? storedUser : null;
-    setForm({ ...form, user_email: userEmail });
+    let userEmail = null;
+
+    if (storedUser !== undefined) {
+      try {
+        const parsed = JSON.parse(storedUser);
+        if (parsed && typeof parsed === 'object' && parsed.user) {
+          userEmail = parsed.user;
+        } else {
+          userEmail = storedUser;
+        }
+      } catch {
+        userEmail = storedUser;
+      }
+    }
+
+    setForm(prevForm => ({ ...prevForm, user_email: userEmail }));
     setUser(userEmail);
   }
 }, []);
